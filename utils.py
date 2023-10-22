@@ -43,7 +43,7 @@ def check_post_url(post_url: str):
     return post_url
 
 
-def login_details() -> tuple[str, str]:
+def login_details():
     credentials_exist = True
     try:
         with open(
@@ -101,10 +101,11 @@ def load_more(target: str, target_class: str, driver: webdriver.Chrome):
             break
 
 
-def extract_emails(comments: list[str]) -> list[str]:
+def extract_emails(comments):
     emails = []
     for comment in comments:
-        email_match = re.findall(r"[\w\.-]+@[\w\.-]+\.\w+", comment)
+        pattern = r"[\w\.-]+@[\w\.-]+\.\w+"
+        email_match = re.findall(pattern, comment)
         if email_match:
             emails.append(email_match)
         else:
@@ -114,23 +115,23 @@ def extract_emails(comments: list[str]) -> list[str]:
 
 def write_data2csv(
     writer,
-    names: list[str],
-    profile_links: list[str],
-    avatars: list[str],
-    headlines: list[str],
-    emails: list[str],
-    comments: list[str],
+    names,
+    profile_links,
+    avatars,
+    headlines,
+    emails,
+    comments,
 ):
     for name, profile_link, avatar, headline, email, comment in zip(
         names, profile_links, avatars, headlines, emails, comments
     ):
         writer.writerow(
-            [name, profile_link, avatar, headline, email, comment.encode("utf-8")]
+            [name.split()[0], headline, avatar, email[0],comment.encode("utf-8")]
         )
         # utf-8 encoding helps to deal with emojis
 
 
-def download_avatars(urls: list[str], filenames: list[str], dir_name: str):
+def download_avatars(urls, filenames, dir_name: str):
     try:
         os.mkdir(dir_name)
     except:

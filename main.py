@@ -57,7 +57,7 @@ unique_suffix = now.strftime("-%m-%d-%Y--%H-%M")
 with open(
     "config.json",
 ) as f:
-    Config: dict[str, str] = json.load(f)
+    Config = json.load(f)
 
 
 post_url = check_post_url(Config["post_url"])
@@ -128,7 +128,15 @@ if args.save_page_source:
 bs_obj = BSoup(driver.page_source, "html.parser")
 
 comments = bs_obj.find_all("span", {"class": Config["comment_class"]})
-comments = [comment.get_text(strip=True) for comment in comments]
+final_comments = []
+for comment in comments:
+    if 'href="mailto' in str(comment):
+        email_comment = str(comment).split('href="mailto:')[1].split('"')[0]
+        final_comments.append(email_comment)
+    else:
+        final_comments.append('')
+
+comments = final_comments.copy()
 
 headlines = bs_obj.find_all("span", {"class": Config["headline_class"]})
 headlines = [headline.get_text(strip=True) for headline in headlines]
